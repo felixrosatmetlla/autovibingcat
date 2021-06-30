@@ -8,10 +8,16 @@ import numpy as np
 import ffmpeg
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+
+import sys
+sys.path.append(str(Path(__file__).parent / "bpm_detector/bpm_detection"))
+
 import bpm_detection
 
 ## GLOBAL VARIABLES
+resources_path = str(Path(__file__).parent / "resources")
 tmp_output_path = str(Path(__file__).parent / "temp_output")
+input_video_path = os.path.join(resources_path, "vibingCat-green-key.mp4")
 provisional_path = os.path.join(tmp_output_path, "provisional.mp4")
 bpm_video_path = os.path.join(tmp_output_path, "bpm_prov_video.mp4")
 bpm_audio_path = os.path.join(tmp_output_path, "bpm_prov_audio.wav")
@@ -58,7 +64,7 @@ def modify_cat_bpm(music_video_start_time: int, vibing_cat_video_length: int):
     new_time = vibing_cat_bpm*vibing_cat_video_length/bpm
     time_factor = new_time/vibing_cat_video_length
 
-    ffmpeg.input("vibingCat-green-key.mp4").setpts(str(time_factor)+'*PTS').output(tempo_mod_path).run(overwrite_output=True)
+    ffmpeg.input(input_video_path).setpts(str(time_factor)+'*PTS').output(tempo_mod_path).run(overwrite_output=True)
 
 def edit_cat_video(start_time: int):
     music_video = cv2.VideoCapture(original_mv_path)
