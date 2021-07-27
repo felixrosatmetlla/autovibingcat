@@ -1,7 +1,7 @@
 numpy==1.20.3
 ffmpeg-python==0.2.0
 moviepy==1.0.3
-pytube==10.8.5
+youtube_dl==2021.6.6
 opencv-python==4.5.1.48
 youtube-search-python==1.4.0
 

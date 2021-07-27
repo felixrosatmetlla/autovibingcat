@@ -1,6 +1,7 @@
 import argparse
 from youtubesearchpython import VideosSearch
-from pytube import YouTube
+import youtube_dl
+# from pytube import YouTube
 from pathlib import Path
 import cv2
 import os
@@ -41,8 +42,13 @@ def get_youtube_video(song_title: str):
 
     print('Downloading ' + video_link + '...')
 
-    yt = YouTube(video_link)
-    yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first().download(output_path=tmp_output_path, filename="original_music_video")
+    ytdl_options = {
+        'format':'mp4/bestvideo',
+        'outtmpl':'%(tmp_output_path)s/original_music_video.%(ext)s'
+    }
+
+    with youtube_dl.YoutubeDL(ytdl_options) as ydl:
+        ydl.download([video_link])
 
     print(results['result'][0]['title'] + ' saved as original_music_video.mp4')
     print('\n')
