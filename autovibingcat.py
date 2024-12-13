@@ -1,6 +1,7 @@
 import argparse
+import essentia.standard as es
 from youtubesearchpython import VideosSearch
-from pytube import YouTube
+from pytubefix import YouTube
 from pathlib import Path
 import cv2
 import os
@@ -8,11 +9,6 @@ import numpy as np
 import ffmpeg
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
-
-import sys
-sys.path.append(str(Path(__file__).parent / "bpm_detector/bpm_detection"))
-
-import bpm_detection
 
 ## GLOBAL VARIABLES
 resources_path = str(Path(__file__).parent / "resources")
@@ -23,7 +19,7 @@ bpm_video_path = os.path.join(tmp_output_path, "bpm_prov_video.mp4")
 bpm_audio_path = os.path.join(tmp_output_path, "bpm_prov_audio.wav")
 tempo_mod_path = os.path.join(tmp_output_path, "vibingCat_tempo_mod.mp4")
 tempo_mod_fps_path = os.path.join(tmp_output_path, "vibingCat_tempo_mod_fps.mp4")
-original_mv_path = os.path.join(tmp_output_path, "original_music_video.mp4")
+original_mv_path = os.path.join(tmp_output_path, "original_music_video")
 output_path = os.path.join(tmp_output_path, "output.mp4")
 
 class VideoAttributes:
@@ -55,7 +51,14 @@ def modify_cat_bpm(music_video_start_time: int, vibing_cat_video_length: int):
     audioclip = cut_video.audio
     audioclip.write_audiofile(bpm_audio_path)
 
-    bpm = bpm_detection.main(bpm_audio_path, 3)
+    audiobeat = es.MonoLoader(filename = bpm_audio_path)()
+
+    rhythm_extractor = es.RhythmExtractor2013(method="multifeature")
+    bpm, beats, beats_confidence, _, beats_intervals = rhythm_extractor(audiobeat)
+
+    print("BPM:", bpm)
+    print("Beat positions (sec.):", beats)
+    print("Beat estimation confidence:", beats_confidence)
 
     print('Song approximated bpm is: ' + str(bpm))
 
