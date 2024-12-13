@@ -1,3 +1,0 @@
-[submodule "bpm_detector"]
-	path = bpm_detector
-	url = https://github.com/felixrosatmetlla/the-BPM-detector-python.git
