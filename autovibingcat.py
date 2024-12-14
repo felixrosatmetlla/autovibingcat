@@ -138,17 +138,17 @@ def create_vibing_cat(song_title:str, start_time: int):
     
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser(description="Process .wav file to determine the Beats Per Minute.")
-    # parser.add_argument("--title", required=True, help="Song title that want to be used.")
-    # parser.add_argument(
-    #     "--start",
-    #     type=int,
-    #     default=60,
-    #     help="Second of the song where will start the cat video.",
-    # )
+    parser = argparse.ArgumentParser(description="Process .wav file to determine the Beats Per Minute.")
+    parser.add_argument("--title", required=True, help="Song title that want to be used.")
+    parser.add_argument(
+        "--start",
+        type=int,
+        default=60,
+        help="Second of the song where will start the cat video.",
+    )
 
-    # args = parser.parse_args()
+    args = parser.parse_args()
     
-    create_vibing_cat("Strategy - TWICE", 60)
+    create_vibing_cat(args.title, args.start)
 
     print("Done! Your video has been saved in: " + output_path)
