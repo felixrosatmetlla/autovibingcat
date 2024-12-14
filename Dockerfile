@@ -4,7 +4,7 @@ WORKDIR /autovibingcat
 
 COPY . .
 
-RUN apt-get update && apt-get install ffmpeg libsm6 libxext6 libqt5gui5 -y \
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6 -y \
     && pip3 install -r ./requirements.txt
 
 ENV QT_DEBUG_PLUGINS=1
