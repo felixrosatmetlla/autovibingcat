@@ -2,11 +2,12 @@ FROM jjanzic/docker-python3-opencv:latest
 
 WORKDIR /autovibingcat
 
-COPY . .
-
 RUN apt-get update && apt-get install ffmpeg libsm6 libxext6 -y \
-    && pip3 install -r ./requirements.txt
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-ENV QT_DEBUG_PLUGINS=1
+COPY ./autovibingcat.py ./requirements.txt ./resources ./
+
+RUN pip3 install -r ./requirements.txt
 
 ENTRYPOINT [ "python", "-m", "autovibingcat" ]
