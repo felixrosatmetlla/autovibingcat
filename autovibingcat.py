@@ -103,13 +103,7 @@ def edit_cat_video(start_time: int):
         f = frame - res 
         f = np.where(f == 0, frame_cry, f)
 
-        cv2.imshow("video", frame)
-        cv2.imshow("mask", f)   
-
         prov_video.write(f)
-
-        cv2.waitKey(20)
-        cv2.destroyAllWindows()
 
     cat_video.release()
     music_video.release()
