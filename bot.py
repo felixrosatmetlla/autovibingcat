@@ -30,7 +30,7 @@ async def main() -> None:
                 post = posts.posts[0]
 
                 txt = post.record.text
-                x = re.search("@autovibingcat\.bsky\.social song:\"(.*)\".*start:.*(\d+)", txt)
+                x = re.search("@autovibingcat\.bsky\.social.*song:\"(.*)\".*start:[^0-9]+(\d+)", txt)
                 songTitle = x[1]
                 startTime = int(x[2])
                 print(f'Request => song:{songTitle}; start:{startTime}')
@@ -42,8 +42,11 @@ async def main() -> None:
                     vid_data = f.read()
 
                 root_post_ref = models.create_strong_ref(post)
-                await async_client.send_video(text="Here is your video!", video=vid_data, reply_to=models.AppBskyFeedPost.ReplyRef(parent=root_post_ref, root=root_post_ref))
-
+                try:
+                    await async_client.send_video(text="Here is your video!", video=vid_data, reply_to=models.AppBskyFeedPost.ReplyRef(parent=root_post_ref, root=root_post_ref))
+                except Exception as e:
+                    await async_client.send_video(text="Here is your video!", video=vid_data, reply_to=models.AppBskyFeedPost.ReplyRef(parent=root_post_ref, root=root_post_ref))
+        
         # mark notifications as processed (isRead=True)
         await async_client.app.bsky.notification.update_seen({'seen_at': last_seen_at})
         print('Successfully process notification. Last seen at:', last_seen_at)
