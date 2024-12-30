@@ -122,6 +122,13 @@ def add_audio_to_video(start_time: int, end_time: float):
     prov_video.audio = audioclip
     prov_video.write_videofile(output_path)
 
+def cleanup_tmp_files():
+    Path.unlink(Path(provisional_path))
+    Path.unlink(Path(bpm_video_path))
+    Path.unlink(Path(bpm_audio_path))
+    Path.unlink(Path(tempo_mod_path))
+    Path.unlink(Path(tempo_mod_fps_path))
+    Path.unlink(Path(original_mv_path))
 
 def create_vibing_cat(song_title:str, start_time: int):
     vibing_cat_video_length = 22
@@ -135,7 +142,8 @@ def create_vibing_cat(song_title:str, start_time: int):
     end_time = start_time + (cat_attributes.frames/cat_attributes.fps)
 
     add_audio_to_video(start_time, end_time)
-    
+
+    cleanup_tmp_files()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process .wav file to determine the Beats Per Minute.")
