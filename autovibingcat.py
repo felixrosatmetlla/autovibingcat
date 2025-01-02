@@ -9,18 +9,20 @@ import numpy as np
 import ffmpeg
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+import uuid
 
 ## GLOBAL VARIABLES
 default_output_filename = "output.mp4"
 resources_path = str(Path(__file__).parent / "resources")
 tmp_output_path = str(Path(__file__).parent / "temp_output")
 input_video_path = os.path.join(resources_path, "vibingCat-green-key.mp4")
-provisional_path = os.path.join(tmp_output_path, "provisional.mp4")
-bpm_video_path = os.path.join(tmp_output_path, "bpm_prov_video.mp4")
-bpm_audio_path = os.path.join(tmp_output_path, "bpm_prov_audio.wav")
-tempo_mod_path = os.path.join(tmp_output_path, "vibingCat_tempo_mod.mp4")
-tempo_mod_fps_path = os.path.join(tmp_output_path, "vibingCat_tempo_mod_fps.mp4")
-original_mv_path = os.path.join(tmp_output_path, "original_music_video")
+provisional_path = os.path.join(tmp_output_path, f"provisional_{uuid.uuid4().hex}.mp4")
+bpm_video_path = os.path.join(tmp_output_path, f"bpm_prov_video_{uuid.uuid4().hex}.mp4")
+bpm_audio_path = os.path.join(tmp_output_path, f"bpm_prov_audio_{uuid.uuid4().hex}.wav")
+tempo_mod_path = os.path.join(tmp_output_path, f"vibingCat_tempo_mod_{uuid.uuid4().hex}.mp4")
+tempo_mod_fps_path = os.path.join(tmp_output_path, f"vibingCat_tempo_mod_fps_{uuid.uuid4().hex}.mp4")
+original_mv_filename = f"original_music_video_{uuid.uuid4().hex}"
+original_mv_path = os.path.join(tmp_output_path, original_mv_filename)
 
 class VideoAttributes:
     def __init__(self, video: cv2.VideoCapture):
@@ -38,9 +40,9 @@ def get_youtube_video(song_title: str):
     print('Downloading ' + video_link + '...')
 
     yt = YouTube(video_link)
-    yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first().download(output_path=tmp_output_path, filename="original_music_video")
+    yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first().download(output_path=tmp_output_path, filename=original_mv_filename)
 
-    print(results['result'][0]['title'] + ' saved as original_music_video.mp4')
+    print(results['result'][0]['title'] + f' saved as {original_mv_filename}.mp4')
     print('\n')
 
 def modify_cat_bpm(music_video_start_time: int, vibing_cat_video_length: int):
@@ -118,6 +120,7 @@ def add_audio_to_video(start_time: int, end_time: float, output_path: str):
     clip_music_video = music_video.subclip(start_time, end_time)
     audioclip = clip_music_video.audio
 
+    output_path = output_path.replace(':', '\:')
     prov_video.audio = audioclip
     prov_video.write_videofile(output_path)
 
