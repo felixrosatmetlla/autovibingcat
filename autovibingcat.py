@@ -82,7 +82,6 @@ def edit_cat_video(start_time: int):
     prov_video = cv2.VideoWriter(provisional_path, fourcc, mv_attributes.fps,(int(mv_attributes.width), int(mv_attributes.height)))
 
     start_frame = int(start_time * mv_attributes.fps)
-    end_frame = int(start_frame + cat_attributes.frames)
 
     music_video.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
 

@@ -1,3 +1,4 @@
+from pathlib import Path
 from time import sleep
 import os
 import re
@@ -9,7 +10,6 @@ from autovibingcat import create_vibing_cat
 
 # how often we should check for new notifications
 FETCH_NOTIFICATIONS_DELAY_SEC = 10
-
 
 async def main() -> None:
     async_client = AsyncClient()
@@ -46,12 +46,21 @@ async def main() -> None:
                     await async_client.send_video(text="Here is your video!", video=vid_data, reply_to=models.AppBskyFeedPost.ReplyRef(parent=root_post_ref, root=root_post_ref))
                 except Exception as e:
                     await async_client.send_video(text="Here is your video!", video=vid_data, reply_to=models.AppBskyFeedPost.ReplyRef(parent=root_post_ref, root=root_post_ref))
-        
+
+                clean_output_file()
+
         # mark notifications as processed (isRead=True)
         await async_client.app.bsky.notification.update_seen({'seen_at': last_seen_at})
         print('Successfully process notification. Last seen at:', last_seen_at)
 
         sleep(FETCH_NOTIFICATIONS_DELAY_SEC)
+
+def clean_output_file():
+    tmp_output_path = str(Path(__file__).parent / "temp_output")
+    output_path = os.path.join(tmp_output_path, "output.mp4")
+
+    if os.path.isfile(Path(output_path)):
+        Path.unlink(Path(output_path))
 
 
 if __name__ == '__main__':
