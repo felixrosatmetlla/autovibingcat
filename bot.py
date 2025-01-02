@@ -15,7 +15,7 @@ FETCH_NOTIFICATIONS_DELAY_SEC = 10
 Notification = models.AppBskyNotificationListNotifications.Notification
 
 async def main() -> None:
-    sem = asyncio.Semaphore(3)
+    sem = asyncio.Semaphore(4)
 
     async_client = AsyncClient()
     await async_client.login(os.environ['BSKY_VIBINGCAT_HANDLE'], os.environ['BSKY_VIBINGCAT_PASS'])
