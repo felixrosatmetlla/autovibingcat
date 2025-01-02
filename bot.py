@@ -30,15 +30,19 @@ async def main() -> None:
                 post = posts.posts[0]
 
                 txt = post.record.text
-                x = re.search("@autovibingcat\.bsky\.social.*song:\"(.*)\".*start:[^0-9]+(\d+)", txt)
+                x = re.search("@autovibingcat\.bsky\.social.*song:\"(.*)\".*start:[^0-9]?(\d+)", txt)
                 songTitle = x[1]
                 startTime = int(x[2])
                 print(f'Request => song:{songTitle}; start:{startTime}')
                 print('Start processing...')
                 
-                create_vibing_cat(songTitle, startTime)
+                tmp_output_path = str(Path(__file__).parent / "temp_output")
+                output_filename = f'{songTitle}.mp4'
+                output_path = os.path.join(tmp_output_path, output_filename)
 
-                with open('temp_output/output.mp4', 'rb') as f:
+                create_vibing_cat(songTitle, startTime, output_path)
+
+                with open(output_path, 'rb') as f:
                     vid_data = f.read()
 
                 root_post_ref = models.create_strong_ref(post)
@@ -47,7 +51,7 @@ async def main() -> None:
                 except Exception as e:
                     await async_client.send_video(text="Here is your video!", video=vid_data, reply_to=models.AppBskyFeedPost.ReplyRef(parent=root_post_ref, root=root_post_ref))
 
-                clean_output_file()
+                clean_output_file(output_path)
 
         # mark notifications as processed (isRead=True)
         await async_client.app.bsky.notification.update_seen({'seen_at': last_seen_at})
@@ -55,10 +59,7 @@ async def main() -> None:
 
         sleep(FETCH_NOTIFICATIONS_DELAY_SEC)
 
-def clean_output_file():
-    tmp_output_path = str(Path(__file__).parent / "temp_output")
-    output_path = os.path.join(tmp_output_path, "output.mp4")
-
+def clean_output_file(output_path: str):
     if os.path.isfile(Path(output_path)):
         Path.unlink(Path(output_path))
 

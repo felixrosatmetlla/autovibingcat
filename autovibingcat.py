@@ -129,7 +129,7 @@ def cleanup_tmp_files():
     Path.unlink(Path(tempo_mod_fps_path))
     Path.unlink(Path(original_mv_path))
 
-def create_vibing_cat(song_title:str, start_time: int, output_path:str):
+def create_vibing_cat(song_title:str, start_time: int, output_path: str):
     vibing_cat_video_length = 22
 
     get_youtube_video(song_title)
