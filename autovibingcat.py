@@ -11,6 +11,7 @@ from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 
 ## GLOBAL VARIABLES
+default_output_filename = "output.mp4"
 resources_path = str(Path(__file__).parent / "resources")
 tmp_output_path = str(Path(__file__).parent / "temp_output")
 input_video_path = os.path.join(resources_path, "vibingCat-green-key.mp4")
@@ -20,7 +21,6 @@ bpm_audio_path = os.path.join(tmp_output_path, "bpm_prov_audio.wav")
 tempo_mod_path = os.path.join(tmp_output_path, "vibingCat_tempo_mod.mp4")
 tempo_mod_fps_path = os.path.join(tmp_output_path, "vibingCat_tempo_mod_fps.mp4")
 original_mv_path = os.path.join(tmp_output_path, "original_music_video")
-output_path = os.path.join(tmp_output_path, "output.mp4")
 
 class VideoAttributes:
     def __init__(self, video: cv2.VideoCapture):
@@ -111,7 +111,7 @@ def edit_cat_video(start_time: int):
 
     return mv_attributes, cat_attributes
 
-def add_audio_to_video(start_time: int, end_time: float):
+def add_audio_to_video(start_time: int, end_time: float, output_path: str):
     prov_video = VideoFileClip(provisional_path)
     music_video = VideoFileClip(original_mv_path)
 
@@ -129,7 +129,7 @@ def cleanup_tmp_files():
     Path.unlink(Path(tempo_mod_fps_path))
     Path.unlink(Path(original_mv_path))
 
-def create_vibing_cat(song_title:str, start_time: int):
+def create_vibing_cat(song_title:str, start_time: int, output_path:str):
     vibing_cat_video_length = 22
 
     get_youtube_video(song_title)
@@ -140,7 +140,7 @@ def create_vibing_cat(song_title:str, start_time: int):
 
     end_time = start_time + (cat_attributes.frames/cat_attributes.fps)
 
-    add_audio_to_video(start_time, end_time)
+    add_audio_to_video(start_time, end_time, output_path)
 
     cleanup_tmp_files()
 
@@ -153,9 +153,11 @@ if __name__ == "__main__":
         default=60,
         help="Second of the song where will start the cat video.",
     )
+    parser.add_argument("--filename", default=default_output_filename, help="Filename of the output file including .mp4 extension. e.g: filename.mp4")
 
     args = parser.parse_args()
-    
-    create_vibing_cat(args.title, args.start)
+
+    output_path = os.path.join(tmp_output_path, args.filename)
+    create_vibing_cat(args.title, args.start, output_path)
 
     print("Done! Your video has been saved in: " + output_path)
